@@ -26,7 +26,7 @@ class EncryptedMessage {
         this.messageText = '';
         this.artText = '';
         this.encryptedDisplayText = '';
-        this.promptText = '\n\nHit Enter To Decrypt...';
+        this.promptText = '\n\nPica la pantalla';
         this.isDecrypting = false;
         this.intervals = [];
         
@@ -233,18 +233,28 @@ class EncryptedMessage {
         }, 50);
     }
 
-    setupDecryptionListener() {
-        const handleKeyDown = (event) => {
-            if (event.key === "Enter" && !this.isDecrypting) {
-                this.isDecrypting = true;
-                this.menuElement.textContent = this.encryptedDisplayText;
-                this.randomizeText();
-                document.removeEventListener('keydown', handleKeyDown);
-            }
-        };
+  setupDecryptionListener() {
+    const startDecryption = () => {
+        if (!this.isDecrypting) {
+            this.isDecrypting = true;
+            this.menuElement.textContent = this.encryptedDisplayText;
+            this.randomizeText();
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('click', startDecryption);
+            document.removeEventListener('touchstart', startDecryption);
+        }
+    };
 
-        document.addEventListener('keydown', handleKeyDown);
-    }
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            startDecryption();
+        }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('click', startDecryption);     // para PC / móvil
+    document.addEventListener('touchstart', startDecryption); // para iPhone/iPad
+}
 
     randomizeText() {
         let randomizeCount = 0;
